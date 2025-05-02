@@ -6,8 +6,8 @@ public class CuentaBancaria
     public string Numero { get; }
     public decimal Saldo { get; private set; }
     public Estado Estado { get; private set;}
-    public decimal TasaDeInteres { get; set; }
-    public decimal LimiteDeDescubierto { get; set; }
+    public decimal TasaDeInteres { get; init; }
+    public decimal LimiteDeDescubierto { get; init; }
     public decimal Comision { get; set; }
     public string[] Titulares { get; }
 
@@ -16,11 +16,23 @@ public class CuentaBancaria
         Numero = numero;
         Saldo = saldo;
         Tipo = tipo;
-        Estado = Estado.Activa;
+        Estado = Estado.Suspendida;
         Titulares = titulares;
     }  
     public void Depositar(decimal monto)
     {
+        if(VerificarEstado() is not null)
+        {
+            Console.WriteLine(VerificarEstado().Message);
+            return;
+        }
+
+        if (VerificarMonto(monto) is not null)
+        {
+            Console.WriteLine(VerificarMonto(monto).Message);
+            return;
+        }
+
         if (Tipo == TipoCuenta.CajaDeAhorro)
         {
             Saldo += monto;
@@ -34,21 +46,44 @@ public class CuentaBancaria
 
     public void Retirar(decimal monto)
     {
-        if (Tipo == TipoCuenta.CajaDeAhorro)
+        if (VerificarEstado() is not null)
         {
-            Saldo -= monto;
+            Console.WriteLine(VerificarEstado().Message);
+            return;
         }
-        else if (Tipo == TipoCuenta.CuentaCorriente)
+
+        if (VerificarMonto(monto) is not null)
         {
-            if (Saldo - monto >= -LimiteDeDescubierto)
+            Console.WriteLine(VerificarMonto(monto).Message);
+            return; 
+        }
+        try
+        {
+            if (Tipo == TipoCuenta.CajaDeAhorro)
             {
-                Saldo -= monto;
+                if(Saldo >= monto)
+                    Saldo -= monto;
+                else
+                {
+                    Estado = Estado.Suspendida;
+                    throw new InvalidOperationException("Saldo insuficiente.");
+                }
             }
-            if (Saldo < 0)
+            else if (Tipo == TipoCuenta.CuentaCorriente)
             {
-                Estado = Estado.Suspendida;
+                if (Saldo - monto >= -LimiteDeDescubierto)
+                {
+                    Saldo -= monto;
+                }
+                else
+                {
+                    Estado = Estado.Suspendida;
+                    throw new InvalidOperationException("Saldo insuficiente.");
+                }
             }
         }
+        catch (Exception ex) { Console.WriteLine($"ERROR: {ex.Message}"); }
+        
     }
 
     public void AplicarInteres()
@@ -57,5 +92,15 @@ public class CuentaBancaria
         {
             Saldo += Saldo * TasaDeInteres;
         }
+    }
+
+    private Exception VerificarMonto(decimal monto)
+    {
+        return monto <= 0 ? new InvalidOperationException("Monto no válido para realizar la operación.") : null;
+    }
+
+    public Exception VerificarEstado()
+    {
+        return Estado != Estado.Activa ? new InvalidOperationException("Cuenta no activa.") : null;
     }
 }
