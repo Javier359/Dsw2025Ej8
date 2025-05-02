@@ -16,7 +16,7 @@ public class CuentaBancaria
         Numero = numero;
         Saldo = saldo;
         Tipo = tipo;
-        Estado = Estado.Suspendida;
+        Estado = Estado.Activa;
         Titulares = titulares;
     }  
     public void Depositar(decimal monto)
@@ -66,7 +66,7 @@ public class CuentaBancaria
                 else
                 {
                     Estado = Estado.Suspendida;
-                    throw new InvalidOperationException("Saldo insuficiente.");
+                    throw new InvalidOperationException(" La cuenta no cuenta con saldo para la operación solicitada. Fue suspendida.");
                 }
             }
             else if (Tipo == TipoCuenta.CuentaCorriente)
@@ -78,7 +78,7 @@ public class CuentaBancaria
                 else
                 {
                     Estado = Estado.Suspendida;
-                    throw new InvalidOperationException("Saldo insuficiente.");
+                    throw new InvalidOperationException(" La cuenta no cuenta con saldo para la operación solicitada. Fue suspendida.");
                 }
             }
         }
@@ -96,11 +96,11 @@ public class CuentaBancaria
 
     private Exception VerificarMonto(decimal monto)
     {
-        return monto <= 0 ? new InvalidOperationException("Monto no válido para realizar la operación.") : null;
+        return monto <= 0 ? new InvalidOperationException("El monto ingresado no es válido para la operación solicitada") : null;
     }
 
     public Exception VerificarEstado()
     {
-        return Estado != Estado.Activa ? new InvalidOperationException("Cuenta no activa.") : null;
+        return Estado != Estado.Activa ? new InvalidOperationException($"No se puede operar con la cuenta {Estado}") : null;
     }
 }

@@ -8,17 +8,54 @@ namespace Dsw2025Ej8
     {
         static void Main(string[] args)
         {
-            CuentaBancaria cb = new CuentaBancaria("124", 0, TipoCuenta.CuentaCorriente, ["german", "javier"])
+            
+           CuentaBancaria cuentaGerman = new CuentaBancaria("001", 1000, TipoCuenta.CajaDeAhorro, new[] { "German", "Damian" })
             {
                 TasaDeInteres = 0.2M,
-                LimiteDeDescubierto = 0.10M
+                LimiteDeDescubierto = 150M
             };
+            CuentaBancaria cuentaAgustin = new CuentaBancaria("002", 2000, TipoCuenta.CuentaCorriente, new[] { "Agustin", "javier" })
+            {
+                TasaDeInteres = 0.4M,
+                LimiteDeDescubierto = 200M
+            };
+            CuentaBancaria cuentaLuis = new CuentaBancaria("003", 1500, TipoCuenta.CajaDeAhorro, new[] { "Luis", "Matias" })
+            {
+                TasaDeInteres = 0.2M,
+                LimiteDeDescubierto = 300M
+            };
+            CuentaBancaria cuentaAna = new CuentaBancaria("004", 2500, TipoCuenta.CuentaCorriente, new[] { "Ana", "Raul" })
+            {
+                TasaDeInteres = 0.4M,
+                LimiteDeDescubierto = 200M
+            };
+            /*Metodos*/
+            /*cuentaGerman.Depositar(0);
+            cuentaGerman.Retirar(450);
             
-            Console.WriteLine($"Cuenta Bancaria: {cb.Numero} , {cb.Saldo} , {cb.Tipo} , {cb.Titulares[0]}, {cb.TasaDeInteres}, {cb.LimiteDeDescubierto}");
+            cuentaAgustin.Depositar(10);
+            cuentaAgustin.Retirar(2211);
 
-            //cb.Depositar(110);
-            cb.Retirar(200);
+            cuentaLuis.Depositar(100);
+            cuentaLuis.Retirar(1600);
+
+            cuentaAna.Depositar(400);
+            cuentaAna.Retirar(200);*/
+
+            /*anonimo*/
+            var cuentas = new List<CuentaBancaria>
+            {
+                cuentaGerman,
+                cuentaAgustin,
+                cuentaLuis,
+                cuentaAna
+            };
+          
+            foreach (var cuenta in cuentas)
+            {
+                Console.WriteLine($"Resumen: {new { cuenta.Numero, cuenta.Tipo, cuenta.Saldo }}");
+            }
         }
-        
+
     }
 }
